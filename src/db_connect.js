@@ -5,7 +5,7 @@ const config = {
   host: 'localhost',
   database: 'teamwork',
   password: 'micahbala',
-  port: 5432
+  port: 5432,
 };
 
 const pool = new pg.Pool(config);
