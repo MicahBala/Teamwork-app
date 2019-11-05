@@ -118,3 +118,24 @@ export async function updateArticle(req, res, next) {
     });
   }
 }
+
+// Delete and article
+export async function deleteArticle(req, res, next) {
+  const id = parseInt(req.params.id);
+  const deleteQuery = 'DELETE FROM articles_table WHERE id=$1';
+  try {
+    await pool.query(deleteQuery, [id]);
+    res.status(200);
+    res.send({
+      status: 'Success',
+      data: {
+        message: 'Article successfully deleted'
+      }
+    });
+  } catch (err) {
+    res.send({
+      status: 'Error',
+      error: err.message
+    });
+  }
+}

@@ -110,4 +110,28 @@ describe('Connect to articles table in database', () => {
 
     expect(result.body.data.title).toBe('Updated Article');
   });
+
+  it('should delete an article from the database', async () => {
+    const newArticle = {
+      title: 'My New Book',
+      article: 'lorem. Integer tincidunt ante vel ipsum.',
+      created_on: '2019-11-02',
+      owner_id: 2
+    };
+    const article = await request(app)
+      .post('/api/v1/articles')
+      .send(newArticle);
+
+    expect(article.body.data.title).toBe('My New Book');
+    expect(article.body.data.owner_id).toBe('2');
+    expect(article.statusCode).toBe(201);
+
+    const id = parseInt(article.body.data.articleId);
+    const deletedArticle = await request(app).delete(`/api/v1/articles/${id}`);
+
+    expect(deletedArticle.statusCode).toBe(200);
+
+    const result = await request(app).get('/api/v1/feed/articles');
+    expect(result.body.data.length).toBe(1);
+  });
 });
