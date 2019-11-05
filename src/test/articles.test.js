@@ -12,7 +12,7 @@ describe('Reach home page, GET /', () => {
   });
 });
 
-describe('Connect to database', () => {
+describe('Connect to articles table in database', () => {
   beforeAll(async () => {
     await pool.query(
       'CREATE TABLE articles_table (id BIGSERIAL NOT NULL PRIMARY KEY, title VARCHAR(50), article TEXT, created_on DATE, owner_id VARCHAR(5))'
@@ -59,5 +59,30 @@ describe('Connect to database', () => {
 
     const result = await request(app).get('/api/v1/feed/articles');
     expect(result.body.data.length).toBe(2);
+  });
+
+  it('should retrieve one article from database', async () => {
+    const newArticle = {
+      title: 'My New Book',
+      article: 'lorem. Integer tincidunt ante vel ipsum.',
+      created_on: '2019-11-02',
+      owner_id: 2
+    };
+    const article = await request(app)
+      .post('/api/v1/articles')
+      .send(newArticle);
+
+    expect(article.body.data.title).toBe('My New Book');
+    expect(article.body.data.owner_id).toBe('2');
+    expect(article.statusCode).toBe(201);
+
+    const result = await request(app).get(
+      `/api/v1/articles/${article.body.data.articleId}`
+    );
+
+    expect(result.body.data).toHaveProperty('id');
+    expect(result.body.data.id).toBe(`${article.body.data.articleId}`);
+    expect(result.body.data).toHaveProperty('title');
+    expect(result.statusCode).toBe(200);
   });
 });

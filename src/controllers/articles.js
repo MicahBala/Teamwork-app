@@ -1,3 +1,4 @@
+import Joi from 'joi';
 import pool from '../db_connect';
 
 // Get all articles
@@ -18,10 +19,51 @@ export async function getArticles(req, res, next) {
   }
 }
 
+// Get a single article
+export async function getSingleArticle(req, res, next) {
+  try {
+    const getQuery = 'SELECT * FROM articles_table WHERE id = $1';
+    const getArticle = await pool.query(getQuery, [req.params.id]);
+
+    res.status(200);
+    res.send({
+      status: 'Success',
+      data: {
+        message: 'Success',
+        id: getArticle.rows[0].id,
+        createdOn: getArticle.rows[0].created_on,
+        title: getArticle.rows[0].title,
+        comments: 'New comment'
+      }
+    });
+  } catch (err) {
+    res.send({
+      status: 'Error',
+      error: err.message
+    });
+  }
+}
+
 //   Post a new article
 export async function postNewArticle(req, res, next) {
+  const { title, article, created_on, owner_id } = req.body;
+  const schema = {
+    title: Joi.string().required(),
+    article: Joi.string().required(),
+    created_on: Joi.date().required(),
+    owner_id: Joi.number().required()
+  };
+
+  const validatedInput = Joi.validate(req.body, schema);
+
+  if (validatedInput.error) {
+    res.status(400).send({
+      status: 'error',
+      error: validatedInput.error.details[0].message
+    });
+    return;
+  }
   try {
-    const { title, article, created_on, owner_id } = req.body;
     const newQuery =
       'INSERT INTO articles_table (title, article, created_on, owner_id) VALUES ($1, $2, $3, $4) RETURNING *';
     const newArticle = await pool.query(newQuery, [
