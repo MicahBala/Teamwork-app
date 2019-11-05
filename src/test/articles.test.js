@@ -85,4 +85,29 @@ describe('Connect to articles table in database', () => {
     expect(result.body.data).toHaveProperty('title');
     expect(result.statusCode).toBe(200);
   });
+
+  it('should update an article in the database', async () => {
+    const newArticle = {
+      title: 'My New Book',
+      article: 'lorem. Integer tincidunt ante vel ipsum.',
+      created_on: '2019-11-02',
+      owner_id: 2
+    };
+    const article = await request(app)
+      .post('/api/v1/articles')
+      .send(newArticle);
+
+    expect(article.body.data.title).toBe('My New Book');
+    expect(article.body.data.owner_id).toBe('2');
+    expect(article.statusCode).toBe(201);
+
+    const id = parseInt(article.body.data.articleId);
+    const result = await request(app)
+      .patch(`/api/v1/articles/${id}`)
+      .send({
+        title: 'Updated Article'
+      });
+
+    expect(result.body.data.title).toBe('Updated Article');
+  });
 });

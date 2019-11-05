@@ -33,6 +33,7 @@ export async function getSingleArticle(req, res, next) {
         id: getArticle.rows[0].id,
         createdOn: getArticle.rows[0].created_on,
         title: getArticle.rows[0].title,
+        article: getArticle.rows[0].article,
         comments: 'New comment'
       }
     });
@@ -82,6 +83,32 @@ export async function postNewArticle(req, res, next) {
         createdOn: newArticle.rows[0].created_on,
         title: newArticle.rows[0].title,
         owner_id: newArticle.rows[0].owner_id
+      }
+    });
+  } catch (err) {
+    res.send({
+      status: 'Error',
+      error: err.message
+    });
+  }
+}
+
+// Update an article
+export async function updateArticle(req, res, next) {
+  const id = parseInt(req.params.id);
+  const { title, article } = req.body;
+  const updateQuery =
+    'UPDATE articles_table SET title=$1, article=$2 WHERE id=$3 RETURNING *';
+
+  try {
+    const updatedArticle = await pool.query(updateQuery, [title, article, id]);
+    res.status(201);
+    res.send({
+      status: 'Success',
+      data: {
+        message: 'Article successfully Updated',
+        title: updatedArticle.rows[0].title,
+        article: updatedArticle.rows[0].article
       }
     });
   } catch (err) {
