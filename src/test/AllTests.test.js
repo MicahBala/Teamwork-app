@@ -201,5 +201,28 @@ describe('Connect to database', () => {
       expect(result.body.data).toHaveProperty('title');
       expect(result.statusCode).toBe(200);
     });
+
+    it('should delete a gif from database', async () => {
+      const newGif = {
+        image_url: 'http://mynewgifaddress.com',
+        title: 'My New Image',
+        created_on: '2019-11-02',
+        owner_id: 1
+      };
+      const gif = await request(app)
+        .post('/api/v1/gifs')
+        .send(newGif);
+
+      expect(gif.body.data.title).toBe('My New Image');
+      expect(gif.statusCode).toBe(201);
+
+      const id = parseInt(gif.body.data.gifId, 10);
+      const deletedGif = await request(app).delete(`/api/v1/gifs/${id}`);
+
+      expect(deletedGif.statusCode).toBe(200);
+
+      const result = await request(app).get('/api/v1/feed/gifs');
+      expect(result.body.data.length).toBe(1);
+    });
   });
 });

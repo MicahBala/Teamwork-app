@@ -95,3 +95,24 @@ export async function postNewGif(req, res, next) {
     });
   }
 }
+
+// Delete a gif from database
+export async function deleteGif(req, res, next) {
+  const id = parseInt(req.params.id, 10);
+  const deleteQuery = 'DELETE FROM gif_table WHERE id=$1';
+  try {
+    await pool.query(deleteQuery, [id]);
+    res.status(200);
+    res.send({
+      status: 'Success',
+      data: {
+        message: 'Gif post successfully deleted'
+      }
+    });
+  } catch (err) {
+    res.send({
+      status: 'Error',
+      error: err.message
+    });
+  }
+}
