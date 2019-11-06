@@ -4,7 +4,7 @@ import {
   postNewArticle,
   getSingleArticle,
   updateArticle,
-  deleteArticle
+  deleteArticle,
 } from '../controllers/articles';
 
 const router = express.Router();

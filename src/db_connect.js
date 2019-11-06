@@ -7,13 +7,11 @@ const config = {
   host: 'localhost',
   database: `${db}`,
   password: 'micahbala',
-  port: 5432
+  port: 5432,
 };
 
 const pool = new pg.Pool(config);
 
-pool.on('connect', () =>
-  console.log(`Connected to ${db} database successfully`)
-);
+pool.on('connect', () => console.log(`Connected to ${db} database successfully`));
 
 export default pool;
