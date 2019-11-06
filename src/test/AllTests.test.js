@@ -160,30 +160,46 @@ describe('Connect to database', () => {
       expect(result.body.data[0]).toHaveProperty('image_url');
     });
 
+    it('should post a new gif to database', async () => {
+      const newGif = {
+        image_url: 'http://mynewgifaddress.com',
+        title: 'My New Image',
+        created_on: '2019-11-02',
+        owner_id: 1
+      };
+      const gif = await request(app)
+        .post('/api/v1/gifs/')
+        .send(newGif);
+
+      expect(gif.body.data.title).toBe('My New Image');
+      expect(gif.statusCode).toBe(201);
+
+      const result = await request(app).get('/api/v1/feed/gifs');
+      expect(result.body.data.length).toBe(2);
+    });
+
     it('should retrieve a single gif from database', async () => {
-      // const newGif = {
-      //   image_url: 'http://mynewgifaddress.com',
-      //   title: 'My New Image',
-      //   created_on: '2019-11-02',
-      //   owner_id: 1
-      // };
-      // const gif = await request(app)
-      //   .post('/api/v1/gifs/')
-      //   .send(newGif);
+      const newGif = {
+        image_url: 'http://mynewgifaddress.com',
+        title: 'My New Image',
+        created_on: '2019-11-02',
+        owner_id: 1
+      };
+      const gif = await request(app)
+        .post('/api/v1/gifs')
+        .send(newGif);
 
-      // expect(gif.body.data.title).toBe('My New Image');
-      // expect(gif.body.data.owner_id).toBe(1);
-      // expect(gif.statusCode).toBe(201);
+      expect(gif.body.data.title).toBe('My New Image');
+      expect(gif.statusCode).toBe(201);
 
-      // const id = parseInt(1, 10);
-      const result = await request(app).get('/api/v1/gifs/1');
+      const result = await request(app).get(
+        `/api/v1/gifs/${gif.body.data.gifId}`
+      );
 
-      // console.log(result.body);
-
-      // expect(result.body.data).toHaveProperty('id');
-      // expect(result.body.data.id).toBe(`${gif.body.data.id}`);
-      // expect(result.body.data).toHaveProperty('title');
-      // expect(result.statusCode).toBe(200);
+      expect(result.body.data).toHaveProperty('id');
+      expect(result.body.data.id).toBe(`${gif.body.data.gifId}`);
+      expect(result.body.data).toHaveProperty('title');
+      expect(result.statusCode).toBe(200);
     });
   });
 });

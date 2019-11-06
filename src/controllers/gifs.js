@@ -1,4 +1,5 @@
 /* eslint-disable camelcase */
+import Joi from 'joi';
 import pool from '../db_connect';
 
 // Get all gifs
@@ -42,6 +43,55 @@ export async function getSingleGif(req, res, next) {
     res.send({
       status: 'Error',
       error: err.message
+    });
+  }
+}
+
+// Post a new Gif
+export async function postNewGif(req, res, next) {
+  const { image_url, title, created_on, owner_id } = req.body;
+
+  const schema = {
+    image_url: Joi.string().required(),
+    title: Joi.string().required(),
+    created_on: Joi.date().required(),
+    owner_id: Joi.number().required()
+  };
+
+  const validatedInput = Joi.validate(req.body, schema);
+
+  if (validatedInput.error) {
+    res.status(400).send({
+      status: 'error',
+      error: validatedInput.error.details[0].message
+    });
+    return;
+  }
+  try {
+    const newQuery =
+      'INSERT INTO gif_table (image_url, title, created_on, owner_id) VALUES ($1, $2, $3, $4) RETURNING *';
+    const newGif = await pool.query(newQuery, [
+      image_url,
+      title,
+      created_on,
+      owner_id
+    ]);
+
+    res.status(201);
+    res.send({
+      status: 'Success',
+      data: {
+        message: 'Gif image successfully posted',
+        gifId: newGif.rows[0].id,
+        createdOn: newGif.rows[0].created_on,
+        title: newGif.rows[0].title,
+        image_url: newGif.rows[0].image_url
+      }
+    });
+  } catch (error) {
+    res.send({
+      status: 'Error',
+      error: error.message
     });
   }
 }
