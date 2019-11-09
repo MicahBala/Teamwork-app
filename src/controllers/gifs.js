@@ -25,7 +25,7 @@ export async function getSingleGif(req, res, next) {
   const id = parseInt(req.params.id, 10);
   try {
     const getQuery = 'SELECT * FROM gif_table WHERE id = $1';
-    const getGif = await pool.query(getQuery, [req.params.id]);
+    const getGif = await pool.query(getQuery, [id]);
 
     res.status(200);
     res.send({

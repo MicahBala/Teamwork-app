@@ -16,29 +16,29 @@ describe('Reach home page, GET /', () => {
 describe('Connect to database', () => {
   beforeAll(async () => {
     await pool.query(
-      'CREATE TABLE articles_table (id BIGSERIAL NOT NULL PRIMARY KEY, title VARCHAR(50), article TEXT, created_on DATE, owner_id VARCHAR(5))'
+      'CREATE TABLE articles_table (id BIGSERIAL NOT NULL PRIMARY KEY, title VARCHAR(50), article TEXT, created_on DATE, owner_id VARCHAR(5))',
     );
 
     await pool.query(
-      'CREATE TABLE gif_table (id BIGSERIAL NOT NULL PRIMARY KEY, image_url VARCHAR(200), title VARCHAR(50), created_on DATE, owner_id VARCHAR(5))'
+      'CREATE TABLE gif_table (id BIGSERIAL NOT NULL PRIMARY KEY, image_url VARCHAR(200), title VARCHAR(50), created_on DATE, owner_id VARCHAR(5))',
     );
 
     await pool.query(
-      'CREATE TABLE employee (id BIGSERIAL NOT NULL PRIMARY KEY, first_name VARCHAR(50) NOT NULL, last_name VARCHAR(50) NOT NULL, email VARCHAR(50) NOT NULL, password VARCHAR(50) NOT NULL, gender VARCHAR(50) NOT NULL, job_role VARCHAR(50) NOT NULL, department VARCHAR(50) NOT NULL, is_admin BOOLEAN, address TEXT)'
+      'CREATE TABLE employee (id BIGSERIAL NOT NULL PRIMARY KEY, first_name VARCHAR(50) NOT NULL, last_name VARCHAR(50) NOT NULL, email VARCHAR(50) NOT NULL, password VARCHAR(50) NOT NULL, gender VARCHAR(50) NOT NULL, job_role VARCHAR(50) NOT NULL, department VARCHAR(50) NOT NULL, is_admin BOOLEAN, address TEXT)',
     );
   });
 
   beforeEach(async () => {
     await pool.query(
-      "INSERT INTO articles_table (title, article, created_on, owner_id) values ('Blue Swallow (Cheong yeon)', 'In hac habitasse platea dictumst. Aliquam augue quam, sollicitudin vitae, consectetuer eget, rutrum at, lorem. Integer tincidunt ante vel ipsum.', '2019-09-21', 3)"
+      "INSERT INTO articles_table (title, article, created_on, owner_id) values ('Blue Swallow (Cheong yeon)', 'In hac habitasse platea dictumst. Aliquam augue quam, sollicitudin vitae, consectetuer eget, rutrum at, lorem. Integer tincidunt ante vel ipsum.', '2019-09-21', 3)",
     );
 
     await pool.query(
-      "INSERT INTO gif_table (image_url, title, created_on, owner_id) values ('https://mynewimageurl.com', 'My new sunset image', '2019-09-21', 2)"
+      "INSERT INTO gif_table (image_url, title, created_on, owner_id) values ('https://mynewimageurl.com', 'My new sunset image', '2019-09-21', 2)",
     );
 
     await pool.query(
-      "INSERT INTO employee (first_name, last_name, email, password, gender, job_role, department, is_admin, address) values ('John', 'Doe', 'johndoe@mymail.com', 'biSukiE', 'Female', 'Analyst', 'Sports','false','Kaduna');"
+      "INSERT INTO employee (first_name, last_name, email, password, gender, job_role, department, is_admin, address) values ('John', 'Doe', 'johndoe@mymail.com', 'biSukiE', 'Female', 'Analyst', 'Sports','false','Kaduna');",
     );
   });
 
@@ -69,7 +69,7 @@ describe('Connect to database', () => {
         title: 'My New Book',
         article: 'lorem. Integer tincidunt ante vel ipsum.',
         created_on: '2019-11-02',
-        owner_id: 2
+        owner_id: 2,
       };
       const article = await request(app)
         .post('/api/v1/articles')
@@ -88,7 +88,7 @@ describe('Connect to database', () => {
         title: 'My New Book',
         article: 'lorem. Integer tincidunt ante vel ipsum.',
         created_on: '2019-11-02',
-        owner_id: 2
+        owner_id: 2,
       };
       const article = await request(app)
         .post('/api/v1/articles')
@@ -99,7 +99,7 @@ describe('Connect to database', () => {
       expect(article.statusCode).toBe(201);
 
       const result = await request(app).get(
-        `/api/v1/articles/${article.body.data.articleId}`
+        `/api/v1/articles/${article.body.data.articleId}`,
       );
 
       expect(result.body.data).toHaveProperty('id');
@@ -113,7 +113,7 @@ describe('Connect to database', () => {
         title: 'My New Book',
         article: 'lorem. Integer tincidunt ante vel ipsum.',
         created_on: '2019-11-02',
-        owner_id: 2
+        owner_id: 2,
       };
       const article = await request(app)
         .post('/api/v1/articles')
@@ -127,7 +127,7 @@ describe('Connect to database', () => {
       const result = await request(app)
         .patch(`/api/v1/articles/${id}`)
         .send({
-          title: 'Updated Article'
+          title: 'Updated Article',
         });
 
       expect(result.body.data.title).toBe('Updated Article');
@@ -138,7 +138,7 @@ describe('Connect to database', () => {
         title: 'My New Book',
         article: 'lorem. Integer tincidunt ante vel ipsum.',
         created_on: '2019-11-02',
-        owner_id: 2
+        owner_id: 2,
       };
       const article = await request(app)
         .post('/api/v1/articles')
@@ -150,7 +150,7 @@ describe('Connect to database', () => {
 
       const id = parseInt(article.body.data.articleId, 10);
       const deletedArticle = await request(app).delete(
-        `/api/v1/articles/${id}`
+        `/api/v1/articles/${id}`,
       );
 
       expect(deletedArticle.statusCode).toBe(200);
@@ -175,7 +175,7 @@ describe('Connect to database', () => {
         image_url: 'http://mynewgifaddress.com',
         title: 'My New Image',
         created_on: '2019-11-02',
-        owner_id: 1
+        owner_id: 1,
       };
       const gif = await request(app)
         .post('/api/v1/gifs/')
@@ -193,7 +193,7 @@ describe('Connect to database', () => {
         image_url: 'http://mynewgifaddress.com',
         title: 'My New Image',
         created_on: '2019-11-02',
-        owner_id: 1
+        owner_id: 1,
       };
       const gif = await request(app)
         .post('/api/v1/gifs')
@@ -203,7 +203,7 @@ describe('Connect to database', () => {
       expect(gif.statusCode).toBe(201);
 
       const result = await request(app).get(
-        `/api/v1/gifs/${gif.body.data.gifId}`
+        `/api/v1/gifs/${gif.body.data.gifId}`,
       );
 
       expect(result.body.data).toHaveProperty('id');
@@ -217,7 +217,7 @@ describe('Connect to database', () => {
         image_url: 'http://mynewgifaddress.com',
         title: 'My New Image',
         created_on: '2019-11-02',
-        owner_id: 1
+        owner_id: 1,
       };
       const gif = await request(app)
         .post('/api/v1/gifs')
@@ -247,7 +247,7 @@ describe('Connect to database', () => {
         job_role: 'Accountant',
         department: 'Accounts',
         is_admin: 'false',
-        address: 'Kaduna'
+        address: 'Kaduna',
       };
       const user = await request(app)
         .post('/api/v1/auth/create-user')
@@ -265,7 +265,7 @@ describe('Connect to database', () => {
         job_role: 'Accountant',
         department: 'Accounts',
         is_admin: 'false',
-        address: 'Kaduna'
+        address: 'Kaduna',
       };
       const user = await request(app)
         .post('/api/v1/auth/create-user')

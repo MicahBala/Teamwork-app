@@ -13,7 +13,7 @@ export async function createUser(req, res, next) {
     job_role,
     department,
     is_admin,
-    address
+    address,
   } = req.body;
 
   const schema = {
@@ -25,21 +25,20 @@ export async function createUser(req, res, next) {
     job_role: Joi.string().required(),
     department: Joi.string().required(),
     is_admin: Joi.boolean().required(),
-    address: Joi.string().required()
+    address: Joi.string().required(),
   };
 
   const validatedInput = Joi.validate(req.body, schema);
   if (validatedInput.error) {
     res.status(400).send({
       status: 'error',
-      error: validatedInput.error.details[0].message
+      error: validatedInput.error.details[0].message,
     });
     return;
   }
 
   try {
-    const newUserQuery =
-      'INSERT INTO employee (first_name, last_name, email, password, gender, job_role, department, is_admin, address) values ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *';
+    const newUserQuery = 'INSERT INTO employee (first_name, last_name, email, password, gender, job_role, department, is_admin, address) values ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *';
     const result = await pool.query(newUserQuery, [
       first_name,
       last_name,
@@ -49,7 +48,7 @@ export async function createUser(req, res, next) {
       job_role,
       department,
       is_admin,
-      address
+      address,
     ]);
 
     res.status(201);
@@ -57,13 +56,13 @@ export async function createUser(req, res, next) {
       status: 'User account created successfully',
       data: {
         token: 'Token',
-        userId: result.rows[0].id
-      }
+        userId: result.rows[0].id,
+      },
     });
   } catch (err) {
     res.send({
       status: 'Error',
-      error: err.message
+      error: err.message,
     });
   }
 }
@@ -73,13 +72,13 @@ export async function signinUser(req, res, next) {
   const { email, password } = req.body;
   const schema = {
     email: Joi.string().required(),
-    password: Joi.string().required()
+    password: Joi.string().required(),
   };
   const validatedInput = Joi.validate(req.body, schema);
   if (validatedInput.error) {
     res.status(400).send({
       status: 'error',
-      error: validatedInput.error.details[0].message
+      error: validatedInput.error.details[0].message,
     });
     return;
   }
@@ -91,13 +90,13 @@ export async function signinUser(req, res, next) {
       status: 'Success',
       data: {
         token: 'Token',
-        userId: result.rows[0].id
-      }
+        userId: result.rows[0].id,
+      },
     });
   } catch (err) {
     res.send({
       status: 'Error',
-      error: err.message
+      error: err.message,
     });
   }
 }

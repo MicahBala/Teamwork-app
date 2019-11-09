@@ -3,7 +3,7 @@ import {
   getAllGifs,
   getSingleGif,
   postNewGif,
-  deleteGif
+  deleteGif,
 } from '../controllers/gifs';
 
 const router = express.Router();
