@@ -22,6 +22,10 @@ describe('Connect to database', () => {
     await pool.query(
       'CREATE TABLE gif_table (id BIGSERIAL NOT NULL PRIMARY KEY, image_url VARCHAR(200), title VARCHAR(50), created_on DATE, owner_id VARCHAR(5))'
     );
+
+    await pool.query(
+      'CREATE TABLE employee (id BIGSERIAL NOT NULL PRIMARY KEY, first_name VARCHAR(50) NOT NULL, last_name VARCHAR(50) NOT NULL, email VARCHAR(50) NOT NULL, password VARCHAR(50) NOT NULL, gender VARCHAR(50) NOT NULL, job_role VARCHAR(50) NOT NULL, department VARCHAR(50) NOT NULL, is_admin BOOLEAN, address TEXT)'
+    );
   });
 
   beforeEach(async () => {
@@ -32,16 +36,22 @@ describe('Connect to database', () => {
     await pool.query(
       "INSERT INTO gif_table (image_url, title, created_on, owner_id) values ('https://mynewimageurl.com', 'My new sunset image', '2019-09-21', 2)"
     );
+
+    await pool.query(
+      "INSERT INTO employee (first_name, last_name, email, password, gender, job_role, department, is_admin, address) values ('John', 'Doe', 'johndoe@mymail.com', 'biSukiE', 'Female', 'Analyst', 'Sports','false','Kaduna');"
+    );
   });
 
   afterEach(async () => {
     await pool.query('DELETE FROM articles_table');
     await pool.query('DELETE FROM gif_table');
+    await pool.query('DELETE FROM employee');
   });
 
   afterAll(async () => {
     await pool.query('DROP TABLE articles_table');
     await pool.query('DROP TABLE gif_table');
+    await pool.query('DROP TABLE employee');
   });
 
   describe('should connect to articles table in database', () => {
@@ -227,6 +237,46 @@ describe('Connect to database', () => {
   });
 
   describe('should connect to employees table in databse', () => {
-    it('should signin a user successfully', async () => {});
+    it('should create a user successfully', async () => {
+      const newUser = {
+        first_name: 'John',
+        last_name: 'Doe',
+        email: 'johndoe@mymail.com',
+        password: 'johndoe',
+        gender: 'Male',
+        job_role: 'Accountant',
+        department: 'Accounts',
+        is_admin: 'false',
+        address: 'Kaduna'
+      };
+      const user = await request(app)
+        .post('/api/v1/auth/create-user')
+        .send(newUser);
+
+      expect(user.statusCode).toBe(201);
+    });
+    it('should signin a user successfully', async () => {
+      const newUser = {
+        first_name: 'John',
+        last_name: 'Doe',
+        email: 'johndoe@mymail.com',
+        password: 'johndoe',
+        gender: 'Male',
+        job_role: 'Accountant',
+        department: 'Accounts',
+        is_admin: 'false',
+        address: 'Kaduna'
+      };
+      const user = await request(app)
+        .post('/api/v1/auth/create-user')
+        .send(newUser);
+
+      expect(user.statusCode).toBe(201);
+
+      const result = await request(app)
+        .post('/api/v1/auth/signin')
+        .send({ email: 'johndoe@mymail.com', password: 'johndoe' });
+      expect(result.status).toBe(200);
+    });
   });
 });
