@@ -225,4 +225,8 @@ describe('Connect to database', () => {
       expect(result.body.data.length).toBe(1);
     });
   });
+
+  describe('should connect to employees table in databse', () => {
+    it('should signin a user successfully', async () => {});
+  });
 });
