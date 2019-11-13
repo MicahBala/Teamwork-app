@@ -3,14 +3,15 @@ import {
   getAllGifs,
   getSingleGif,
   postNewGif,
-  deleteGif,
+  deleteGif
 } from '../controllers/gifs';
+import auth from '../middleware/auth';
 
 const router = express.Router();
 
-router.get('/api/v1/feed/gifs', getAllGifs);
-router.get('/api/v1/gifs/:id', getSingleGif);
-router.post('/api/v1/gifs', postNewGif);
-router.delete('/api/v1/gifs/:id', deleteGif);
+router.get('/api/v1/feed/gifs', auth, getAllGifs);
+router.get('/api/v1/gifs/:id', auth, getSingleGif);
+router.post('/api/v1/gifs', auth, postNewGif);
+router.delete('/api/v1/gifs/:id', auth, deleteGif);
 
 export default router;
