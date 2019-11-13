@@ -27,6 +27,11 @@ export async function getSingleGif(req, res, next) {
     const getQuery = 'SELECT * FROM gif_table WHERE id = $1';
     const getGif = await pool.query(getQuery, [id]);
 
+    // Check if the Gif exist before attempting to delete
+    if (getGif.rows[0] === undefined) {
+      throw new Error('Gif doesnt exist');
+    }
+
     res.status(200);
     res.send({
       status: 'Success',
@@ -49,13 +54,13 @@ export async function getSingleGif(req, res, next) {
 
 // Post a new Gif
 export async function postNewGif(req, res, next) {
-  const { image_url, title, created_on, owner_id } = req.body;
+  const { image_url, title, employee_id, comments_id } = req.body;
 
   const schema = {
     image_url: Joi.string().required(),
     title: Joi.string().required(),
-    created_on: Joi.date().required(),
-    owner_id: Joi.number().required()
+    employee_id: Joi.number().required(),
+    comments_id: Joi.number().required()
   };
 
   const validatedInput = Joi.validate(req.body, schema);
@@ -68,13 +73,15 @@ export async function postNewGif(req, res, next) {
     return;
   }
   try {
+    const createdOn = new Date();
     const newQuery =
-      'INSERT INTO gif_table (image_url, title, created_on, owner_id) VALUES ($1, $2, $3, $4) RETURNING *';
+      'INSERT INTO gif_table (image_url, title, created_on, employee_id, comments_id) VALUES ($1, $2, $3, $4, $5) RETURNING *';
     const newGif = await pool.query(newQuery, [
       image_url,
       title,
-      created_on,
-      owner_id
+      createdOn,
+      employee_id,
+      comments_id
     ]);
 
     res.status(201);
@@ -99,8 +106,15 @@ export async function postNewGif(req, res, next) {
 // Delete a gif from database
 export async function deleteGif(req, res, next) {
   const id = parseInt(req.params.id, 10);
+  const findQuery = 'SELECT * FROM gif_table WHERE id=$1';
   const deleteQuery = 'DELETE FROM gif_table WHERE id=$1';
   try {
+    const queryResult = await pool.query(findQuery, [id]);
+    // Check if the article exist before attempting to delete
+    if (queryResult.rows[0] === undefined) {
+      throw new Error('Gif doesnt exist');
+    }
+
     await pool.query(deleteQuery, [id]);
     res.status(200);
     res.send({
