@@ -1,6 +1,14 @@
 /* eslint-disable camelcase */
 import Joi from 'joi';
 import pool from '../db_connect';
+import cloudinary from 'cloudinary';
+import { CLOUD_NAME, API_KEY, API_SECRET } from 'babel-dotenv';
+
+cloudinary.config({
+  cloud_name: CLOUD_NAME,
+  api_key: API_KEY,
+  api_secret: API_SECRET
+});
 
 // Get all gifs
 export async function getAllGifs(req, res, next) {
@@ -54,13 +62,13 @@ export async function getSingleGif(req, res, next) {
 
 // Post a new Gif
 export async function postNewGif(req, res, next) {
-  const { image_url, title, employee_id, comments_id } = req.body;
+  const { title } = req.body;
+  const uploadImage = req.files.photo;
 
   const schema = {
-    image_url: Joi.string().required(),
     title: Joi.string().required(),
-    employee_id: Joi.number().required(),
-    comments_id: Joi.number().required()
+    employee_id: Joi.number(),
+    comments_id: Joi.number()
   };
 
   const validatedInput = Joi.validate(req.body, schema);
@@ -73,16 +81,18 @@ export async function postNewGif(req, res, next) {
     return;
   }
   try {
+    let image = await cloudinary.uploader.upload(
+      uploadImage.tempFilePath,
+      (err, result) => {
+        return result;
+      }
+    );
+    const image_url = image.url;
+
     const createdOn = new Date();
     const newQuery =
-      'INSERT INTO gif_table (image_url, title, created_on, employee_id, comments_id) VALUES ($1, $2, $3, $4, $5) RETURNING *';
-    const newGif = await pool.query(newQuery, [
-      image_url,
-      title,
-      createdOn,
-      employee_id,
-      comments_id
-    ]);
+      'INSERT INTO gif_table (image_url, title, created_on) VALUES ($1, $2, $3) RETURNING *';
+    const newGif = await pool.query(newQuery, [image_url, title, createdOn]);
 
     res.status(201);
     res.send({

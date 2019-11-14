@@ -95,7 +95,6 @@ export async function signinUser(req, res, next) {
     const result = await pool.query(loginQuery, [email]);
 
     if (result.rows[0] === undefined) {
-      console.log(result.rows[0]);
       throw new Error('User doesnt exist or wrong login crdentials');
     }
 
@@ -113,7 +112,6 @@ export async function signinUser(req, res, next) {
     const options = { expiresIn: '24hr' };
 
     const token = jwt.sign(payload, secret, options);
-    console.log(token);
 
     res.status(200);
     res.send({
