@@ -7,7 +7,7 @@
     "node": "10.15.0"
   },
   "scripts": {
-    "heroku-postbuild":"npm install",
+    "heroku-postbuild": "npm install",
     "start": "babel-node ./src/server.js",
     "start:dev": "nodemon --exec babel-node ./src/server.js",
     "lint": "eslint ./src --fix",
@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/MicahBala/Teamwork-app#readme",
   "dependencies": {
+    "babel-cli": "^6.26.0",
     "babel-plugin-dotenv": "^0.1.1",
     "bcrypt": "^3.0.6",
     "body-parser": "^1.19.0",
