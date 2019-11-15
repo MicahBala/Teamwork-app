@@ -1,9 +1,10 @@
 import jwt from 'jsonwebtoken';
+import { JWT_SECRETE_KEY } from 'babel-dotenv';
 
 const auth = (req, res, next) => {
   try {
     const token = req.headers.authorization.split(' ')[1];
-    const decodedToken = jwt.verify(token, 'my_secrete_key');
+    const decodedToken = jwt.verify(token, JWT_SECRETE_KEY);
     const userId = decodedToken.userId;
 
     if (req.body.userId && req.body.userId !== userId) {
