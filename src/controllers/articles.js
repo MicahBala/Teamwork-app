@@ -53,8 +53,9 @@ export async function postNewArticle(req, res, next) {
   const schema = {
     title: Joi.string().required(),
     article: Joi.string().required(),
-    employee_id: Joi.number().required(),
-    comments_id: Joi.number().required()
+    created_on: Joi.date(),
+    employee_id: Joi.number(),
+    comments_id: Joi.number()
   };
 
   const validatedInput = Joi.validate(req.body, schema);
@@ -68,13 +69,11 @@ export async function postNewArticle(req, res, next) {
   }
   try {
     const newQuery =
-      'INSERT INTO articles_table (title, article, created_on, employee_id, comments_id) VALUES ($1, $2, $3, $4, $5) RETURNING *';
+      'INSERT INTO articles_table (title, article, created_on) VALUES ($1, $2, $3) RETURNING *';
     const newArticle = await pool.query(newQuery, [
       title,
       article,
-      currentDate,
-      employee_id,
-      comments_id
+      currentDate
     ]);
 
     res.status(201);

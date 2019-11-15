@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon --exec babel-node server",
     "lint": "eslint ./src --fix",
-    "test": "jest --watchAll"
+    "test": "jest --watchAll --coverage"
   },
   "repository": {
     "type": "git",
