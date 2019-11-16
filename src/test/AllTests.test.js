@@ -100,6 +100,7 @@ describe('Connect to database', () => {
     await pool.query('DROP TABLE gif_table');
     await pool.query('DROP TABLE comments');
     await pool.query('DROP TABLE employee');
+    await pool.end();
   });
 
   describe('should connect to articles table in database', () => {
