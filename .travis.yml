@@ -8,9 +8,8 @@ node_js:
   - stable
   - node
 script:
-  - 'npm run test'
   - npm run coveralls
-  - nyc --reporter=lcov npm run unit
+  - nyc --reporter=lcov npm run test
 services:
   - postgresql
 before_script:
