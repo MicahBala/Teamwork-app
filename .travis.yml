@@ -14,6 +14,7 @@ services:
   - postgresql
 before_script:
   - psql -c 'create database test;' -U postgres
+  - npm install -g codeclimate-test-reporter
 after_script:
   - codeclimate-test-reporter  < ./coverage/lcov.info
 env:
