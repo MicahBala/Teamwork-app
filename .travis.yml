@@ -14,9 +14,9 @@ services:
   - postgresql
 before_script:
   - psql -c 'create database test;' -U postgres
-  - npm install codeclimate-test-reporter
+  - npm install cc-test-reporter
 after_script:
-  - codeclimate-test-reporter  < ./coverage/lcov.info
+  - cc-test-reporter  < ./coverage/lcov.info
 env:
   global:
-    - CODECLIMATE_REPO_TOKEN=CC_REPO_TOKEN
+    - CC_TEST_REPORTER_ID=CC_REPORTER_ID
