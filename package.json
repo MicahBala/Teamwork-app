@@ -13,7 +13,7 @@
     "start:dev": "nodemon --exec babel-node ./src/server.js",
     "lint": "eslint ./src --fix",
     "test": "jest --coverage",
-    "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls"
+    "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls | codeclimate-test-reporter"
   },
   "repository": {
     "type": "git",
