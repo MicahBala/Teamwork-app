@@ -10,10 +10,12 @@ node_js:
 script:
   - 'npm run test'
   - npm run coveralls
+  - nyc --reporter=lcov npm run unit
 services:
   - postgresql
 before_script:
   - psql -c 'create database test;' -U postgres
+  - npm install nyc
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
@@ -22,3 +24,5 @@ after_script:
 env:
   global:
     - CC_TEST_REPORTER_ID=CC_REPORTER_ID
+notifications:
+  email: false
