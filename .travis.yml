@@ -13,5 +13,4 @@ script:
 services:
   - postgresql
 before_script:
-  - nmp install codeclimate-test-reporter nyc -g
   - psql -c 'create database test;' -U postgres
