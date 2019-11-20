@@ -17,9 +17,9 @@ before_script:
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
 after_script:
-  - ./cc-test-reporter after-build -d --exit-code $TRAVIS_TEST_RESULT
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 env:
   global:
-    - CC_TEST_REPORTER_ID=9044ce0850567187c44c5704cc7349166812118a60c4df8b3ae3e0032aee58cc
+    - CC_TEST_REPORTER_ID=CODE_CLIMATE_KEY
 after_success:
   - npm run coveralls
