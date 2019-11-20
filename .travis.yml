@@ -20,6 +20,6 @@ after_script:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 env:
   global:
-    - CC_TEST_REPORTER_ID=CODE_CLIMATE_KEY
+    - CC_TEST_REPORTER_ID=9044ce0850567187c44c5704cc7349166812118a60c4df8b3ae3e0032aee58cc
 after_success:
   - npm run coveralls
