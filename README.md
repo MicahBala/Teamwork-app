@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/MicahBala/Teamwork-app.svg?branch=develop)](https://travis-ci.org/MicahBala/Teamwork-app) [![Coverage Status](https://coveralls.io/repos/github/MicahBala/Teamwork-app/badge.svg?branch=develop)](https://coveralls.io/github/MicahBala/Teamwork-app?branch=develop) [![Maintainability](https://api.codeclimate.com/v1/badges/a6968562b70a7366b747/maintainability)](https://codeclimate.com/github/MicahBala/Teamwork-app/maintainability)
+[![Build Status](https://travis-ci.org/MicahBala/Teamwork-app.svg?branch=develop)](https://travis-ci.org/MicahBala/Teamwork-app) [![Coverage Status](https://coveralls.io/repos/github/MicahBala/Teamwork-app/badge.svg?branch=develop)](https://coveralls.io/github/MicahBala/Teamwork-app?branch=develop) [![Test Coverage](https://api.codeclimate.com/v1/badges/a6968562b70a7366b747/test_coverage)](https://codeclimate.com/github/MicahBala/Teamwork-app/test_coverage) [![Maintainability](https://api.codeclimate.com/v1/badges/a6968562b70a7366b747/maintainability)](https://codeclimate.com/github/MicahBala/Teamwork-app/maintainability)
 
 # Teamwork-app
 
