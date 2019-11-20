@@ -8,9 +8,7 @@ node_js:
   - stable
   - node
 script:
-  - 'npm run test'
-  - npm run coveralls
-  - bundle exec rspec
+  - npm run test
 services:
   - postgresql
 before_script:
@@ -23,4 +21,6 @@ after_script:
 
 env:
   global:
-    - CODECLIMATE_REPO_TOKEN=CC_REPORTER_ID
+    - CC_TEST_REPORTER_ID=CODE_CLIMATE_KEY
+after_success:
+  - npm run coveralls
