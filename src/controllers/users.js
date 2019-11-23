@@ -1,11 +1,12 @@
 /* eslint-disable camelcase */
 import Joi from 'joi';
 import pool from '../db_connect';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { JWT_SECRETE_KEY } from 'babel-dotenv';
 
 // Create a user
-export async function createUser(req, res, next) {
+const createUser = async (req, res, next) => {
   const {
     first_name,
     last_name,
@@ -14,7 +15,8 @@ export async function createUser(req, res, next) {
     gender,
     job_role,
     department,
-    address
+    address,
+    is_admin
   } = req.body;
 
   const schema = {
@@ -25,7 +27,8 @@ export async function createUser(req, res, next) {
     gender: Joi.string().required(),
     job_role: Joi.string().required(),
     department: Joi.string().required(),
-    address: Joi.string().required()
+    address: Joi.string().required(),
+    is_admin: Joi.string()
   };
 
   const validatedInput = Joi.validate(req.body, schema);
@@ -44,9 +47,10 @@ export async function createUser(req, res, next) {
     if (checkResult.rows[0]) {
       throw new Error(`User already exist with this email ${email}`);
     }
+
     const hashed = bcrypt.hashSync(password, bcrypt.genSaltSync(8));
     const newUserQuery =
-      'INSERT INTO employee (first_name, last_name, email, password, gender, job_role, department, address) values ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *';
+      'INSERT INTO employee (first_name, last_name, email, password, gender, job_role, department, address, is_admin) values ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *';
     const result = await pool.query(newUserQuery, [
       first_name,
       last_name,
@@ -55,14 +59,20 @@ export async function createUser(req, res, next) {
       gender,
       job_role,
       department,
-      address
+      address,
+      is_admin
     ]);
+
+    const payload = { userId: result.rows[0].id };
+    const options = { expiresIn: '24hr' };
+
+    const token = jwt.sign(payload, JWT_SECRETE_KEY, options);
 
     res.status(201);
     res.send({
       status: 'User account created successfully',
       data: {
-        token: 'Token',
+        token: token,
         userId: result.rows[0].id
       }
     });
@@ -73,10 +83,10 @@ export async function createUser(req, res, next) {
       error: err.message
     });
   }
-}
+};
 
 // Signin a user
-export async function signinUser(req, res, next) {
+const signinUser = async (req, res, next) => {
   const { email, password } = req.body;
   const schema = {
     email: Joi.string().required(),
@@ -108,7 +118,7 @@ export async function signinUser(req, res, next) {
     }
 
     const payload = { userId: result.rows[0].id };
-    const secret = 'my_secrete_key';
+    const secret = JWT_SECRETE_KEY;
     const options = { expiresIn: '24hr' };
 
     const token = jwt.sign(payload, secret, options);
@@ -128,4 +138,6 @@ export async function signinUser(req, res, next) {
       error: err.message
     });
   }
-}
+};
+
+export { signinUser, createUser };

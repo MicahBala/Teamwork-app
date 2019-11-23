@@ -3,7 +3,7 @@ import { JWT_SECRETE_KEY } from 'babel-dotenv';
 
 const auth = (req, res, next) => {
   try {
-    const token = req.headers.authorization.split(' ')[1];
+    const token = req.headers.token;
     const decodedToken = jwt.verify(token, JWT_SECRETE_KEY);
     const userId = decodedToken.userId;
 

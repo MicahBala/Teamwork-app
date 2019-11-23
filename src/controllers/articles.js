@@ -1,9 +1,11 @@
 /* eslint-disable camelcase */
 import Joi from 'joi';
 import pool from '../db_connect';
+import jwt from 'jsonwebtoken';
+import { JWT_SECRETE_KEY } from 'babel-dotenv';
 
 // Get all articles
-export async function getArticles(req, res, next) {
+const getArticles = async (req, res, next) => {
   try {
     pool.query('SELECT * FROM articles_table', (error, result) => {
       res.status(200);
@@ -18,13 +20,17 @@ export async function getArticles(req, res, next) {
       error: error.message
     });
   }
-}
+};
 
 // Get a single article
-export async function getSingleArticle(req, res, next) {
+const getSingleArticle = async (req, res, next) => {
   try {
     const getQuery = 'SELECT * FROM articles_table WHERE id = $1';
-    const getArticle = await pool.query(getQuery, [req.params.id]);
+    const getArticle = await pool.query(getQuery, [parseInt(req.params.id)]);
+
+    if (getArticle.rows[0] === undefined) {
+      throw new Error('Article doesnt exist');
+    }
 
     res.status(200);
     res.send({
@@ -44,17 +50,21 @@ export async function getSingleArticle(req, res, next) {
       error: err.message
     });
   }
-}
+};
 
 //   Post a new article
-export async function postNewArticle(req, res, next) {
-  const { title, article, employee_id, comments_id } = req.body;
+const postNewArticle = async (req, res, next) => {
+  const { title, article, comments_id } = req.body;
   const currentDate = new Date();
+
+  const token = req.headers.token;
+  const decodedToken = jwt.verify(token, JWT_SECRETE_KEY);
+  const employee_id = decodedToken.userId;
+
   const schema = {
     title: Joi.string().required(),
     article: Joi.string().required(),
     created_on: Joi.date(),
-    employee_id: Joi.number(),
     comments_id: Joi.number()
   };
 
@@ -69,11 +79,12 @@ export async function postNewArticle(req, res, next) {
   }
   try {
     const newQuery =
-      'INSERT INTO articles_table (title, article, created_on) VALUES ($1, $2, $3) RETURNING *';
+      'INSERT INTO articles_table (title, article, created_on, employee_id) VALUES ($1, $2, $3, $4) RETURNING *';
     const newArticle = await pool.query(newQuery, [
       title,
       article,
-      currentDate
+      currentDate,
+      employee_id
     ]);
 
     res.status(201);
@@ -92,10 +103,10 @@ export async function postNewArticle(req, res, next) {
       error: err.message
     });
   }
-}
+};
 
 // Update an article
-export async function updateArticle(req, res, next) {
+const updateArticle = async (req, res, next) => {
   const id = parseInt(req.params.id, 10);
   const findQuery = 'SELECT * FROM articles_table WHERE id=$1';
   const { title, article } = req.body;
@@ -125,10 +136,10 @@ export async function updateArticle(req, res, next) {
       error: err.message
     });
   }
-}
+};
 
 // Delete and article
-export async function deleteArticle(req, res, next) {
+const deleteArticle = async (req, res, next) => {
   const id = parseInt(req.params.id, 10);
   const findQuery = 'SELECT * FROM articles_table WHERE id=$1';
   const deleteQuery = 'DELETE FROM articles_table WHERE id=$1';
@@ -154,4 +165,12 @@ export async function deleteArticle(req, res, next) {
       error: err.message
     });
   }
-}
+};
+
+export {
+  getArticles,
+  getSingleArticle,
+  postNewArticle,
+  updateArticle,
+  deleteArticle
+};
